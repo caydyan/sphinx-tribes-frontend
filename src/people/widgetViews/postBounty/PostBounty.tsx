@@ -58,13 +58,27 @@ export const PostBounty: FC<Props> = observer(
     const [isOpenStartUpModel, setIsOpenStartupModal] = useState(false);
 
     const isMobile = useIsMobile();
-    const showSignIn = () => {
+    const showSignIn = React.useCallback(() => {
       if (isMobile) {
         ui.setShowSignIn(true);
         return;
       }
       setIsOpenStartupModal(true);
-    };
+    }, [isMobile, ui]);
+
+    React.useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const prefillParam = urlParams.get('prefill');
+      const action = urlParams.get('action');
+
+      if (action === 'create' && prefillParam) {
+        if (ui.meInfo && ui.meInfo?.owner_alias) {
+          setIsOpenPostModal(true);
+        } else {
+          showSignIn();
+        }
+      }
+    }, [ui.meInfo, showSignIn]);
 
     const clickHandler = () => {
       if (ui.meInfo && ui.meInfo?.owner_alias) {
