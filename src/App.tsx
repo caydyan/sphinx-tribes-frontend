@@ -98,7 +98,7 @@ function App() {
 
     if (uiStore.meInfo) {
       const storedPrefill = sessionStorage.getItem('sphinxBountyPrefill');
-      if (storedPrefill && window.location.pathname === '/bounties') {
+      if (storedPrefill) {
         sessionStorage.removeItem('sphinxBountyPrefill');
         history.push(`/bounties?action=create&prefill=${storedPrefill}`);
       }

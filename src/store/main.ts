@@ -1068,6 +1068,58 @@ export class MainStore {
     }
   }
 
+  async getBountyByCode(code: string): Promise<PersonBounty[] | null> {
+    try {
+      const response = await fetch(`${TribesURL}/gobounties/code/${code}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-session-id': this.getSessionId()
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data && data.length) {
+        const ps3: any[] = [];
+        for (let i = 0; i < data.length; i++) {
+          const bounty = { ...data[i].bounty };
+          let assignee;
+          let organization;
+          const owner = { ...data[i].owner };
+
+          if (bounty.assignee) {
+            assignee = { ...data[i].assignee };
+          }
+
+          if (bounty.org_uuid) {
+            organization = { ...data[i].organization };
+          }
+
+          ps3.push({
+            body: { ...bounty, assignee: assignee || '' },
+            person: { ...owner, wanteds: [] },
+            organization: { ...organization }
+          });
+        }
+        return ps3;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error fetching bounty by code:', error);
+      return null;
+    }
+  }
+
   async getBountyByCreated(created: number, unlockCode?: string | null): Promise<PersonBounty[]> {
     try {
       let endpoint = `gobounties/created/${created}`;

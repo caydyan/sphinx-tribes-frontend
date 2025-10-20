@@ -136,6 +136,10 @@ function Form(props: FormProps) {
           mappedData.ticket_url = decoded.repositoryUrl;
         }
 
+        if (decoded.bounty_code) {
+          mappedData.unlock_code = decoded.bounty_code;
+        }
+
         setDynamicSchemaName('freelance_job_request');
         setDynamicSchema(dynamicSchemasByType['freelance_job_request']);
         setDynamicInitialValues(mappedData);

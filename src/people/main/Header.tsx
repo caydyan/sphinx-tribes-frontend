@@ -325,7 +325,10 @@ function Header() {
       if (me && me.pubkey) {
         ui.setMeInfo(me);
         ui.setShowSignIn(false);
-        setShowWelcome(true);
+        const storedPrefill = sessionStorage.getItem('sphinxBountyPrefill');
+        if (!storedPrefill) {
+          setShowWelcome(true);
+        }
       }
     } catch (e: any) {
       console.log(e);
@@ -618,8 +621,11 @@ function Header() {
         <SignIn
           onSuccess={() => {
             ui.setShowSignIn(false);
-            setShowWelcome(true);
-            goToEditSelf();
+            const storedPrefill = sessionStorage.getItem('sphinxBountyPrefill');
+            if (!storedPrefill) {
+              setShowWelcome(true);
+              goToEditSelf();
+            }
           }}
         />
       </Modal>
