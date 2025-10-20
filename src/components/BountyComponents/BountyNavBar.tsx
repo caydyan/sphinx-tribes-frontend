@@ -459,8 +459,11 @@ const BountyNavBar: React.FC = () => {
         <SignIn
           onSuccess={() => {
             ui.setShowSignIn(false);
-            setShowWelcome(true);
-            goToEditSelf();
+            const storedPrefill = sessionStorage.getItem('sphinxBountyPrefill');
+            if (!storedPrefill) {
+              setShowWelcome(true);
+              goToEditSelf();
+            }
           }}
         />
       </StyledModal>
