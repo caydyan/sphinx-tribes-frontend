@@ -77,8 +77,15 @@ export const TicketModalPage = observer(({ setConnectPerson }: Props) => {
     const unlockCode = urlParams.get('unlock');
 
     if (bountyId) {
-      bounty = await main.getBountyById(Number(bountyId), unlockCode);
-      bountyIndex = await main.getBountyIndexById(Number(bountyId));
+      const isNumeric = /^\d+$/.test(bountyId);
+      
+      if (isNumeric) {
+        bounty = await main.getBountyById(Number(bountyId), unlockCode);
+        bountyIndex = await main.getBountyIndexById(Number(bountyId));
+      } else {
+        bounty = await main.getBountyByCode(bountyId);
+        bountyIndex = 0;
+      }
     } else if (search && search.created) {
       bounty = await main.getBountyByCreated(Number(search.created), unlockCode);
       bountyIndex = await main.getBountyIndexById(Number(search.created));
