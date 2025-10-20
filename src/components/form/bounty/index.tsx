@@ -105,6 +105,50 @@ function Form(props: FormProps) {
   }, []);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const prefillParam = urlParams.get('prefill');
+    const action = urlParams.get('action');
+
+    if (action === 'create' && prefillParam) {
+      try {
+        const decoded = JSON.parse(atob(prefillParam));
+
+        const mapHoursToSession = (hours: number): string => {
+          if (hours <= 1) return '1 hour';
+          if (hours <= 3) return '3 hours';
+          if (hours <= 8) return '8 hours';
+          if (hours <= 24) return '24 hours';
+          if (hours <= 48) return '48 hours';
+          return '72 hours';
+        };
+
+        const mappedData: any = {
+          one_sentence_summary: decoded.title || '',
+          description: decoded.description || '',
+          wanted_type: 'Web development'
+        };
+
+        if (decoded.estimatedHours) {
+          mappedData.estimated_session_length = mapHoursToSession(decoded.estimatedHours);
+        }
+
+        if (decoded.repositoryUrl) {
+          mappedData.ticket_url = decoded.repositoryUrl;
+        }
+
+        setDynamicSchemaName('freelance_job_request');
+        setDynamicSchema(dynamicSchemasByType['freelance_job_request']);
+        setDynamicInitialValues(mappedData);
+        setStepTracker(2);
+
+        window.history.replaceState({}, '', '/bounties?action=create');
+      } catch (error) {
+        console.error('Failed to parse prefill data:', error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     async function fetchWorkspaces() {
       if (ui.meInfo?.id) {
         await main.getUserDropdownWorkspaces(ui.meInfo?.id);
@@ -346,6 +390,7 @@ function Form(props: FormProps) {
       onSubmit={props.onSubmit}
       innerRef={props.formRef}
       validationSchema={validator(schema)}
+      enableReinitialize={true}
     >
       {({ setFieldTouched, handleSubmit, values, setFieldValue, errors, initialValues }: any) => {
         const isDescriptionValid = values.ticket_url

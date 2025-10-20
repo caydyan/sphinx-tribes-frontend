@@ -87,6 +87,24 @@ function App() {
     setPosthog();
   }, [setPosthog]);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const prefillParam = urlParams.get('prefill');
+    const action = urlParams.get('action');
+
+    if (action === 'create' && prefillParam && !uiStore.meInfo) {
+      sessionStorage.setItem('sphinxBountyPrefill', prefillParam);
+    }
+
+    if (uiStore.meInfo) {
+      const storedPrefill = sessionStorage.getItem('sphinxBountyPrefill');
+      if (storedPrefill && window.location.pathname === '/bounties') {
+        sessionStorage.removeItem('sphinxBountyPrefill');
+        history.push(`/bounties?action=create&prefill=${storedPrefill}`);
+      }
+    }
+  }, [uiStore.meInfo]);
+
   return (
     <ThemeProvider theme={theme}>
       <Router history={history}>
