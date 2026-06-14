@@ -15,6 +15,9 @@ const ButtonSetContainer = styled.div`
 
 const ButtonSet = ({ showGithubBtn, ...props }: any) => {
   const color = colors['light'];
+  const hasTribe =
+    typeof props.tribe === 'string' && props.tribe.toLowerCase() !== 'none';
+
   return (
     <ButtonSetContainer
       style={{
@@ -174,6 +177,24 @@ const ButtonSet = ({ showGithubBtn, ...props }: any) => {
         </div>
         <EuiText className="ButtonText">Share to Twitter</EuiText>
       </ButtonContainer>
+      {hasTribe && (
+        <EuiText
+          data-testid="join-tribe-ticket-link"
+          onClick={() => props?.tribeFunction?.()}
+          style={{
+            color: color.blue1,
+            cursor: 'pointer',
+            fontSize: '13px',
+            fontWeight: 500,
+            lineHeight: '18px',
+            marginTop: '16px',
+            maxWidth: '220px'
+          }}
+        >
+          Interested in seeing more tickets like this? Join the tribe and get notified about new
+          tickets
+        </EuiText>
+      )}
       {props.isOwner && props.show === false && (
         <>
           <div

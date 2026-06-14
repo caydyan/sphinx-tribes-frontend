@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 import ButtonSet from '../BountyModalButtonSet';
@@ -22,5 +22,19 @@ describe('BountyModalButtonSet Component', () => {
 
     const tribeButton = screen.getByText(/kotlin/i);
     expect(tribeButton).toBeInTheDocument();
+  });
+
+  it('renders the ticket tribe notification link and opens the tribe when clicked', () => {
+    const tribeFunction = jest.fn();
+
+    render(<ButtonSet tribe="kotlin" tribeFunction={tribeFunction} />);
+
+    const joinLink = screen.getByTestId('join-tribe-ticket-link');
+    expect(joinLink).toHaveTextContent(
+      'Interested in seeing more tickets like this? Join the tribe and get notified about new tickets'
+    );
+
+    fireEvent.click(joinLink);
+    expect(tribeFunction).toHaveBeenCalledTimes(1);
   });
 });
