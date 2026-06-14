@@ -37,4 +37,21 @@ describe('BountyModalButtonSet Component', () => {
     fireEvent.click(joinLink);
     expect(tribeFunction).toHaveBeenCalledTimes(1);
   });
+
+  it('opens the tribe notification link from the keyboard', () => {
+    const tribeFunction = jest.fn();
+
+    render(<ButtonSet tribe="kotlin" tribeFunction={tribeFunction} />);
+
+    fireEvent.keyDown(screen.getByTestId('join-tribe-ticket-link'), { key: 'Enter' });
+    expect(tribeFunction).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not render the ticket tribe notification link for missing tribes', () => {
+    const { rerender } = render(<ButtonSet tribe="none" />);
+    expect(screen.queryByTestId('join-tribe-ticket-link')).not.toBeInTheDocument();
+
+    rerender(<ButtonSet tribe=" " />);
+    expect(screen.queryByTestId('join-tribe-ticket-link')).not.toBeInTheDocument();
+  });
 });

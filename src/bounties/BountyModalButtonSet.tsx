@@ -15,8 +15,8 @@ const ButtonSetContainer = styled.div`
 
 const ButtonSet = ({ showGithubBtn, ...props }: any) => {
   const color = colors['light'];
-  const hasTribe =
-    typeof props.tribe === 'string' && props.tribe.toLowerCase() !== 'none';
+  const tribeName = typeof props.tribe === 'string' ? props.tribe.trim() : '';
+  const hasTribe = tribeName.length > 0 && tribeName.toLowerCase() !== 'none';
 
   return (
     <ButtonSetContainer
@@ -81,7 +81,7 @@ const ButtonSet = ({ showGithubBtn, ...props }: any) => {
           </div>
         </ButtonContainer>
       )}
-      {typeof props.tribe === 'string' && props.tribe !== 'None' ? (
+      {hasTribe ? (
         <ButtonContainer
           topMargin={'16px'}
           onClick={() => {
@@ -104,7 +104,7 @@ const ButtonSet = ({ showGithubBtn, ...props }: any) => {
             />
           </div>
           <EuiText className="ButtonText">
-            {props.tribe.slice(0, 14)} {props.tribe.length > 14 && '...'}
+            {tribeName.slice(0, 14)} {tribeName.length > 14 && '...'}
           </EuiText>
           <div className="ImageContainer">
             <img
@@ -181,6 +181,13 @@ const ButtonSet = ({ showGithubBtn, ...props }: any) => {
         <EuiText
           data-testid="join-tribe-ticket-link"
           onClick={() => props?.tribeFunction?.()}
+          onKeyDown={(event: React.KeyboardEvent) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              props?.tribeFunction?.();
+            }
+          }}
+          role="button"
           style={{
             color: color.blue1,
             cursor: 'pointer',
@@ -190,6 +197,7 @@ const ButtonSet = ({ showGithubBtn, ...props }: any) => {
             marginTop: '16px',
             maxWidth: '220px'
           }}
+          tabIndex={0}
         >
           Interested in seeing more tickets like this? Join the tribe and get notified about new
           tickets
